@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oh.record.mapper.RecordMapper">
+
+    <resultMap type="com.oh.record.domain.Record" id="RecordMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="context" column="context" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="RecordMap">
+        select
+            *
+        from
+            guide
+        where
+            id = #{id}
+        limit
+            1
+    </select>
+
+
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from guide
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="toLink != null and toLink != ''">
+                and to_link = #{toLink}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="createBy != null">
+                and create_by = #{createBy}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="updateBy != null">
+                and update_by = #{updateBy}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="delFlag != null">
+                and del_flag = #{delFlag}
+            </if>
+        </where>
+    </select>
+
+    <!--分页查询    -->
+    <select id="guidePagingToGetUserData" resultType="com.gsxy.guide.domain.vo.GuidePagingToData">
+        select
+            *
+        from
+            guide
+        <where>
+            <if test="params.name != null and params.name != ''">
+                and  name like concat('%',#{params.name},'%')
+            </if>
+            <if test="params.toLink != null and params.toLink != ''">
+                and  to_link like concat('%',#{params.toLink},'%')
+            </if>
+            <if test="params.status != null">
+                and   #{params.status} = 0
+            </if>
+            <if test="params.delFlag != null">
+                and  #{params.delFlag} = 0
+            </if>
+        </where>
+        limit
+        #{start},#{size}
+    </select>
+
+    <!-- 查找总数    -->
+    <select id="getCount" resultType="java.lang.Long" parameterType="com.gsxy.guide.domain.Guide">
+        select
+            count(*)
+        from
+            guide
+        <where>
+            <if test="params.name != null and params.name != ''">
+                and name = #{params.name}
+            </if>
+            <if test="params.toLink != null and params.toLink != ''">
+                and to_link = #{params.toLink}
+            </if>
+            <if test="params.status != null">
+                and status =  #{params.status}
+            </if>
+            <if test="params.delFlag != null">
+                and del_flag =  #{params.delFlag}
+            </if>
+        </where>
+    </select>
+
+
+
+    <!--新增所有列-->
+     <insert id="insert" parameterType="com.gsxy.guide.domain.Guide">
+        insert into guide
+        values (null,#{name},#{toLink},#{createTime},#{createBy},#{updateTime},#{updateBy},#{status},#{delFlag})
+    </insert>
+
+
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update guide
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="toLink != null and toLink != ''">
+                to_link = #{toLink},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where id = #{id}
+        limit 1
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from
+            guide
+        where
+            id = #{id}
+        limit
+            1
+    </delete>
+
+</mapper>
+
