@@ -40,5 +40,12 @@ public interface RecordMapper {
      * @return
      */
     Long getCount(@Param("params") Record record);
+
+    /**
+     * 根据Id删除Record数据
+     * @param id
+     * @return
+     */
+    Long deleteById(Long id);
 }
 

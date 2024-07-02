@@ -21,6 +21,7 @@
         values (null,#{name},#{type},#{content},#{createTime},#{status},#{delFlag})
     </insert>
 
+
     <!-- 分页查询   -->
     <select id="recordPagingToGetUserData" resultType="com.oh.record.domain.vo.RecordPagingToDataVo">
         select
@@ -73,6 +74,13 @@
         </where>
     </select>
 
+    <!-- 根据Id删除Record数据  -->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from
+            record
+        where
+            id = #{id}
+    </delete>
 
 </mapper>
 

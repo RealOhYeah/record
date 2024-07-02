@@ -96,12 +96,16 @@ public class RecordServiceImpl implements RecordService {
     }
 
     /**
-     * 删除Record数据
+     * 根据Id删除Record数据
      * @param id
      * @return
      */
     @Override
     public ResponseVo deleteById(Long id) {
-        return null;
+        Long numbersOfOpetion = recordMapper.deleteById(id);
+        if (numbersOfOpetion.longValue() == 0L) {
+            return new ResponseVo("删除失败", null, "0x500");
+        }
+        return new ResponseVo("删除成功",null, "0x200");
     }
 }
