@@ -3,14 +3,26 @@ package com.oh.record.controller;
 import com.alibaba.fastjson2.JSONArray;
 import com.oh.record.domain.Record;
 import com.oh.record.domain.bo.RecordPagingToGetDataBo;
-import com.oh.record.domain.bo.RecordDownloadBo;
+import com.oh.record.domain.bo.WordUrlBo;
 import com.oh.record.service.RecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 /**
  * Record
@@ -28,17 +40,33 @@ public class RecordController {
     @Resource
     private RecordService recordService;
 
+
     /**
      * 下载文档
-     * @param recordDownloadBo
+     *
+     * @param wordUrl
      * @return
      */
-    @PostMapping("/download")
-    @ApiOperation("下载Record数据")
-    public String download(@RequestBody RecordDownloadBo recordDownloadBo) {
+    @GetMapping(value ="/download",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ApiOperation("下载文档")
+    public ResponseEntity<byte[]> download(@RequestParam String wordUrl) throws IOException {
 
-        return JSONArray.toJSONString(recordService.download(recordDownloadBo));
+        File file = new File("d:\\Desktop\\show\\template\\" + wordUrl);
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[inputStream.available()];
+        inputStream.read(bytes, 0, inputStream.available());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        wordUrl = URLEncoder.encode(wordUrl, "UTF-8");
+        headers.setContentDispositionFormData("attachment", wordUrl);
+
+        return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+
+//        return recordService.getWord(wordUrl);
     }
+
+
 
     /**
      * 分页查询生成的文档

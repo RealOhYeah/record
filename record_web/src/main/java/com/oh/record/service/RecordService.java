@@ -2,8 +2,8 @@ package com.oh.record.service;
 
 import com.oh.record.domain.Record;
 import com.oh.record.domain.bo.RecordPagingToGetDataBo;
-import com.oh.record.domain.bo.RecordDownloadBo;
 import com.oh.record.domain.vo.ResponseVo;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 
@@ -15,12 +15,6 @@ import java.io.IOException;
  */
 public interface RecordService {
 
-    /**
-     * 下载文档
-     * @param recordDownloadBo
-     * @return
-     */
-    ResponseVo download(RecordDownloadBo recordDownloadBo);
 
     /**
      * 分页查询生成的文档
@@ -42,4 +36,12 @@ public interface RecordService {
      * @return
      */
     ResponseVo deleteById(Long id);
+
+    /**
+     * 文档下载
+     *
+     * @param wordUrl
+     * @return
+     */
+    ResponseEntity<byte[]> getWord(String wordUrl) throws IOException;
 }

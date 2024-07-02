@@ -1,28 +1,25 @@
 package com.oh.record.service.impl;
 
 import com.deepoove.poi.XWPFTemplate;
-import com.deepoove.poi.config.Configure;
 import com.deepoove.poi.data.Texts;
-import com.google.common.collect.Lists;
 import com.oh.record.domain.Record;
 import com.oh.record.domain.bo.RecordPagingToGetDataBo;
-import com.oh.record.domain.bo.RecordDownloadBo;
 import com.oh.record.domain.vo.RecordPagingToDataVo;
 import com.oh.record.domain.vo.RecordPagingToGetDataVo;
 import com.oh.record.domain.vo.ResponseVo;
 import com.oh.record.mapper.RecordMapper;
 import com.oh.record.service.RecordService;
-import org.apache.poi.sl.draw.geom.Guide;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 文档实现类
@@ -37,16 +34,6 @@ public class RecordServiceImpl implements RecordService {
     @Value("${filePath}")
     private String path;
 
-
-    /**
-     * 下载文档
-     * @param recordDownloadBo
-     * @return
-     */
-    @Override
-    public ResponseVo download(RecordDownloadBo recordDownloadBo) {
-        return null;
-    }
 
     /**
      * 分页查询生成的文档
@@ -107,5 +94,30 @@ public class RecordServiceImpl implements RecordService {
             return new ResponseVo("删除失败", null, "0x500");
         }
         return new ResponseVo("删除成功",null, "0x200");
+    }
+
+    /**
+     * 文档下载
+     *
+     * @param wordUrl
+     * @return
+     */
+    @Override
+    public ResponseEntity<byte[]> getWord(String wordUrl) throws IOException {
+
+        File file = new File("d:\\Desktop\\show\\template\\" + wordUrl);
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[inputStream.available()];
+        inputStream.read(bytes, 0, inputStream.available());
+
+        // 构建响应头，设置Content-Type为application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", wordUrl);
+
+        // 设置字符编码为UTF-8
+        headers.set(HttpHeaders.CONTENT_ENCODING, "UTF-8");
+
+        return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
     }
 }
