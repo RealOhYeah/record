@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
@@ -110,14 +111,15 @@ public class RecordServiceImpl implements RecordService {
         byte[] bytes = new byte[inputStream.available()];
         inputStream.read(bytes, 0, inputStream.available());
 
-        // 构建响应头，设置Content-Type为application/vnd.openxmlformats-officedocument.wordprocessingml.document
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        wordUrl = URLEncoder.encode(wordUrl, "UTF-8");
         headers.setContentDispositionFormData("attachment", wordUrl);
 
-        // 设置字符编码为UTF-8
-        headers.set(HttpHeaders.CONTENT_ENCODING, "UTF-8");
+        //释放内存
+        inputStream.close();
 
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+
     }
 }

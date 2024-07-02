@@ -51,19 +51,7 @@ public class RecordController {
     @ApiOperation("下载文档")
     public ResponseEntity<byte[]> download(@RequestParam String wordUrl) throws IOException {
 
-        File file = new File("d:\\Desktop\\show\\template\\" + wordUrl);
-        FileInputStream inputStream = new FileInputStream(file);
-        byte[] bytes = new byte[inputStream.available()];
-        inputStream.read(bytes, 0, inputStream.available());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        wordUrl = URLEncoder.encode(wordUrl, "UTF-8");
-        headers.setContentDispositionFormData("attachment", wordUrl);
-
-        return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
-
-//        return recordService.getWord(wordUrl);
+        return recordService.getWord(wordUrl);
     }
 
 
