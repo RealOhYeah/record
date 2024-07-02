@@ -1,26 +1,40 @@
 package com.oh.record.service.impl;
 
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.config.Configure;
+import com.deepoove.poi.data.Texts;
+import com.google.common.collect.Lists;
 import com.oh.record.domain.Record;
 import com.oh.record.domain.bo.RecordPagingToGetDataBo;
-import com.oh.record.domain.bo.recordDownloadBo;
+import com.oh.record.domain.bo.RecordDownloadBo;
 import com.oh.record.domain.vo.ResponseVo;
 import com.oh.record.mapper.RecordMapper;
 import com.oh.record.service.RecordService;
+import org.apache.poi.sl.draw.geom.Guide;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * 向导实现类
+ * 文档实现类
  *
  * @author Oh...Yeah!!!
- * @since 2024-03-13 17:35:43
  */
-@Service("guideService")
+@Service("recordService")
 public class RecordServiceImpl implements RecordService {
     @Autowired
     private RecordMapper recordMapper;
+
+    @Value("${filePath}")
+    private String path;
+
 
     /**
      * 下载文档
@@ -28,7 +42,7 @@ public class RecordServiceImpl implements RecordService {
      * @return
      */
     @Override
-    public ResponseVo download(recordDownloadBo recordDownloadBo) {
+    public ResponseVo download(RecordDownloadBo recordDownloadBo) {
         return null;
     }
 
@@ -39,7 +53,7 @@ public class RecordServiceImpl implements RecordService {
      */
     @Override
     public ResponseVo queryByPage(RecordPagingToGetDataBo recordPagingToGetDataBo) {
-        return null;
+       return null;
     }
 
     /**
@@ -48,9 +62,33 @@ public class RecordServiceImpl implements RecordService {
      * @return
      */
     @Override
-    public ResponseVo insert(Record record) {
+    public ResponseVo insert(Record record) throws IOException {
 
-        return null;
+        File file = new File(path +"textTemplate.docx" );
+
+        if (!file.exists() || file.length() == 0) {
+            throw new FileNotFoundException("文件不存在或为空，请检查文件路径和内容");
+        }
+
+        //加载模板
+        XWPFTemplate template = XWPFTemplate.compile(file);
+
+        //填充数据
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("text1", Texts.of(record.getContext()).color("000000").bold().create());
+
+        //渲染数据
+        template.render(map);
+
+        //以文件形式输出
+        template.writeAndClose(new FileOutputStream(path + record.getName()+"."+record.getType()));
+
+        recordMapper.insert(record);
+
+
+
+        return new ResponseVo("成功生成", record,"0x200");
     }
 
     /**

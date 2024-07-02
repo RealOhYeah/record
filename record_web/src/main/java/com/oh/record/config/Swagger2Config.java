@@ -16,10 +16,10 @@ public class Swagger2Config {
     private static ApiInfo DEFAULT = null;
     @Bean
     public Docket docket(){
-        Contact DEFAULT_CONTACT = new Contact("Hacker","www.Oh_Yeah.com/blog/","614988210@qq.com");
+        Contact DEFAULT_CONTACT = new Contact("Oh...Yeah！！！","www.Oh_Yeah.com/blog/","614988210@qq.com");
         DEFAULT = new ApiInfo(
-                "Hacker Test",
-                "Hacker Test swagger",
+                "Oh...Yeah！！！ Test",
+                "Oh...Yeah！！！ Test swagger",
                 "V-1.0",
                 "\"www.Oh_Yeah.com/blog/",
                 DEFAULT_CONTACT,

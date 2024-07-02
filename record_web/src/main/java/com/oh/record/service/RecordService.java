@@ -2,8 +2,10 @@ package com.oh.record.service;
 
 import com.oh.record.domain.Record;
 import com.oh.record.domain.bo.RecordPagingToGetDataBo;
-import com.oh.record.domain.bo.recordDownloadBo;
+import com.oh.record.domain.bo.RecordDownloadBo;
 import com.oh.record.domain.vo.ResponseVo;
+
+import java.io.IOException;
 
 /**
  * 向导接口
@@ -18,7 +20,7 @@ public interface RecordService {
      * @param recordDownloadBo
      * @return
      */
-    ResponseVo download(recordDownloadBo recordDownloadBo);
+    ResponseVo download(RecordDownloadBo recordDownloadBo);
 
     /**
      * 分页查询生成的文档
@@ -32,7 +34,7 @@ public interface RecordService {
      * @param record
      * @return
      */
-    ResponseVo insert(Record record);
+    ResponseVo insert(Record record) throws IOException;
 
     /**
      * 删除Record数据

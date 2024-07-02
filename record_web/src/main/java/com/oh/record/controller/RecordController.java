@@ -3,13 +3,14 @@ package com.oh.record.controller;
 import com.alibaba.fastjson2.JSONArray;
 import com.oh.record.domain.Record;
 import com.oh.record.domain.bo.RecordPagingToGetDataBo;
-import com.oh.record.domain.bo.recordDownloadBo;
+import com.oh.record.domain.bo.RecordDownloadBo;
 import com.oh.record.service.RecordService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * Record
@@ -34,7 +35,7 @@ public class RecordController {
      */
     @PostMapping("/download")
     @ApiOperation("下载Record数据")
-    public String download(@RequestBody recordDownloadBo recordDownloadBo) {
+    public String download(@RequestBody RecordDownloadBo recordDownloadBo) {
 
         return JSONArray.toJSONString(recordService.download(recordDownloadBo));
     }
@@ -58,7 +59,7 @@ public class RecordController {
      */
     @PostMapping("/generate")
     @ApiOperation("新增Record数据")
-    public String generate(@RequestBody Record record) {
+    public String generate(@RequestBody Record record) throws IOException {
         return JSONArray.toJSONString(recordService.insert(record));
     }
 

@@ -2,7 +2,7 @@ package com.oh.record.domain.bo;
 
 import java.io.Serializable;
 
-public class recordDownloadBo implements Serializable {
+public class RecordDownloadBo implements Serializable {
 
     /**
      * 网址名
@@ -17,11 +17,11 @@ public class recordDownloadBo implements Serializable {
      */
     private String context;
 
-    public recordDownloadBo() {
+    public RecordDownloadBo() {
     }
 
 
-    public recordDownloadBo(String name, String type, String context) {
+    public RecordDownloadBo(String name, String type, String context) {
         this.name = name;
         this.type = type;
         this.context = context;
@@ -54,7 +54,7 @@ public class recordDownloadBo implements Serializable {
 
     @Override
     public String toString() {
-        return "recordDownloadBo{" +
+        return "RecordDownloadBo{" +
                 "name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", context='" + context + '\'' +
