@@ -20,7 +20,7 @@ public class Record implements Serializable {
     /**
      * 文档内容
      */
-    private String context;
+    private String content;
     /**
      * 创建时间
      */
@@ -37,11 +37,11 @@ public class Record implements Serializable {
     public Record() {
     }
 
-    public Record(Long id, String name, String type, String context, LocalDateTime createTime, Integer status, Integer delFlag) {
+    public Record(Long id, String name, String type, String content, LocalDateTime createTime, Integer status, Integer delFlag) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.context = context;
+        this.content = content;
         this.createTime = createTime;
         this.status = status;
         this.delFlag = delFlag;
@@ -71,12 +71,12 @@ public class Record implements Serializable {
         this.type = type;
     }
 
-    public String getContext() {
-        return context;
+    public String getContent() {
+        return content;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public LocalDateTime getCreateTime() {
@@ -109,7 +109,7 @@ public class Record implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", type='" + type + '\'' +
-                ", context='" + context + '\'' +
+                ", content='" + content + '\'' +
                 ", createTime=" + createTime +
                 ", status=" + status +
                 ", delFlag=" + delFlag +

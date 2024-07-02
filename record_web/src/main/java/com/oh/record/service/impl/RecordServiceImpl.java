@@ -7,6 +7,8 @@ import com.google.common.collect.Lists;
 import com.oh.record.domain.Record;
 import com.oh.record.domain.bo.RecordPagingToGetDataBo;
 import com.oh.record.domain.bo.RecordDownloadBo;
+import com.oh.record.domain.vo.RecordPagingToDataVo;
+import com.oh.record.domain.vo.RecordPagingToGetDataVo;
 import com.oh.record.domain.vo.ResponseVo;
 import com.oh.record.mapper.RecordMapper;
 import com.oh.record.service.RecordService;
@@ -53,7 +55,15 @@ public class RecordServiceImpl implements RecordService {
      */
     @Override
     public ResponseVo queryByPage(RecordPagingToGetDataBo recordPagingToGetDataBo) {
-       return null;
+        Record record = recordPagingToGetDataBo.getRecord();
+        if (record == null){
+            record = new Record();
+        }
+
+        List<RecordPagingToDataVo> fileList = recordMapper.recordPagingToGetUserData(recordPagingToGetDataBo.getStart(),recordPagingToGetDataBo.getSize(),record);
+        Long count = recordMapper.getCount(record);
+
+        return new ResponseVo("查询成功",new RecordPagingToGetDataVo(fileList,Math.toIntExact(count)),"0x200");
     }
 
     /**
@@ -69,24 +79,18 @@ public class RecordServiceImpl implements RecordService {
         if (!file.exists() || file.length() == 0) {
             throw new FileNotFoundException("文件不存在或为空，请检查文件路径和内容");
         }
-
         //加载模板
         XWPFTemplate template = XWPFTemplate.compile(file);
-
         //填充数据
         HashMap<String, Object> map = new HashMap<>();
-
-        map.put("text1", Texts.of(record.getContext()).color("000000").bold().create());
-
+        map.put("text1", Texts.of(record.getContent()).color("000000").bold().create());
         //渲染数据
         template.render(map);
-
         //以文件形式输出
         template.writeAndClose(new FileOutputStream(path + record.getName()+"."+record.getType()));
 
+        //将数据插入数据库
         recordMapper.insert(record);
-
-
 
         return new ResponseVo("成功生成", record,"0x200");
     }
