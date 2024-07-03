@@ -43,8 +43,6 @@ public class RecordController {
         return recordService.getWord(wordUrl);
     }
 
-
-
     /**
      * 分页查询生成的文档
      * @param recordPagingToGetDataBo
