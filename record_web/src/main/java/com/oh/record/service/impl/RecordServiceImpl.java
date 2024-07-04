@@ -81,22 +81,12 @@ public class RecordServiceImpl implements RecordService {
         //将数据插入数据库
         recordMapper.insert(record);
 
+        //释放内存
+        template.close();
+
         return new ResponseVo("成功生成", record,"0x200");
     }
 
-    /**
-     * 根据Id删除Record数据
-     * @param id
-     * @return
-     */
-    @Override
-    public ResponseVo deleteById(Long id) {
-        Long numbersOfOpetion = recordMapper.deleteById(id);
-        if (numbersOfOpetion.longValue() == 0L) {
-            return new ResponseVo("删除失败", null, "0x500");
-        }
-        return new ResponseVo("删除成功",null, "0x200");
-    }
 
     /**
      * 文档下载
@@ -123,4 +113,20 @@ public class RecordServiceImpl implements RecordService {
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
 
     }
+
+    /**
+     * 根据Id删除Record数据
+     * @param id
+     * @return
+     */
+    @Override
+    public ResponseVo deleteById(Long id) {
+        Long numbersOfOpetion = recordMapper.deleteById(id);
+        if (numbersOfOpetion.longValue() == 0L) {
+            return new ResponseVo("删除失败", null, "0x500");
+        }
+        return new ResponseVo("删除成功",null, "0x200");
+    }
+
+
 }

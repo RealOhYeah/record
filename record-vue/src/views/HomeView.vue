@@ -2,7 +2,7 @@
  * @Author: Oh...Yeah!!! 614988210@qq.com
  * @Date: 2024-07-02 20:21:40
  * @LastEditors: Oh...Yeah!!! 614988210@qq.com
- * @LastEditTime: 2024-07-04 17:34:46
+ * @LastEditTime: 2024-07-04 17:44:57
  * @FilePath: \record-vue\src\views\HomeView.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -52,7 +52,13 @@ const onSubmit = async () => {
     const resDownload = await recordDownloadService(form.value.name + "." + form.value.type).then(response => {
         if (response.status === 200) {
             download(response)
+            ElMessage.success({
+                message: '文档下载成功',
+                type: 'success',
+                plain: true,
+            })  
         }
+
     });
  
       
@@ -66,16 +72,10 @@ const onSubmit = async () => {
 
 const download  =  (response) => {
     const fileName = response.headers["content-disposition"].split(";")[2].split("=")[1]
-    // console.log(decodeURIComponent(response.headers));
-    // console.log(decodeURIComponent(fileName));
-    // console.log(decodeURIComponent(fileName.substring(1,fileName.length - 1)));
-    // console.log(fileName.data);
     const newName = decodeURIComponent(fileName.substring(1, fileName.length - 1))
     
  
-    let link = document.createElement('a');
-    // link.href = window.URL.createObjectURL(response.data);
-    // link.href = window.URL.createObjectURL(new Blob([response.data], { type: 'application/docx' }));
+    let link = document.createElement('a')
     let url = null
     const binaryData = [];
     binaryData.push(response.data);
@@ -103,8 +103,7 @@ const resetForm = () => {
     form.value.delFlag = ''
  
 }
-
-
+ 
 
 </script>
 
