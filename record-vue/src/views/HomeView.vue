@@ -2,28 +2,108 @@
  * @Author: Oh...Yeah!!! 614988210@qq.com
  * @Date: 2024-07-02 20:21:40
  * @LastEditors: Oh...Yeah!!! 614988210@qq.com
- * @LastEditTime: 2024-07-03 17:16:50
+ * @LastEditTime: 2024-07-04 17:34:46
  * @FilePath: \record-vue\src\views\HomeView.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <script setup> 
 
 import { reactive, ref } from 'vue'
+import { recordGenerateService } from '@/api/record.js' 
+import { recordDownloadService } from '@/api/record.js' 
 
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
+import { ElMessage } from 'element-plus'
+const dialogFormVisible = ref(false) 
 
 
-const form = reactive({
-    name: '',
-    region: '',
-    date1: '',
-    date2: '',
-    delivery: false,
-    type: [],
-    resource: '',
-    desc: '',
+const form = ref({
+    name: '笔录',
+    type: 'docx',
+    content: '测试文本',
+    status: '0',
+    delFlag: '0'
+
 })
+ 
+
+const onSubmit = async () => {
+    dialogFormVisible.value = false;
+  
+    if (!form) return
+ 
+    const res  = await recordGenerateService(form.value)
+ 
+    
+    if (res.data.code === "0x200") {
+ 
+        ElMessage.success({
+            message: '文档生成成功',
+            type: 'success',
+            plain: true,
+        })  
+    } else {
+        ElMessage.error({
+            message: '文档生成失败',
+            type: 'error',
+            plain: true,
+        })
+    }
+  
+    const resDownload = await recordDownloadService(form.value.name + "." + form.value.type).then(response => {
+        if (response.status === 200) {
+            download(response)
+        }
+    });
+ 
+      
+    form.value.name = ''  
+    form.value.content = '' 
+
+    
+   
+
+}
+
+const download  =  (response) => {
+    const fileName = response.headers["content-disposition"].split(";")[2].split("=")[1]
+    // console.log(decodeURIComponent(response.headers));
+    // console.log(decodeURIComponent(fileName));
+    // console.log(decodeURIComponent(fileName.substring(1,fileName.length - 1)));
+    // console.log(fileName.data);
+    const newName = decodeURIComponent(fileName.substring(1, fileName.length - 1))
+    
+ 
+    let link = document.createElement('a');
+    // link.href = window.URL.createObjectURL(response.data);
+    // link.href = window.URL.createObjectURL(new Blob([response.data], { type: 'application/docx' }));
+    let url = null
+    const binaryData = [];
+    binaryData.push(response.data);
+    url = window.URL.createObjectURL(new Blob(binaryData, { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document;chartset=UTF-8' }));
+    link.href = url;
+    //设置下载文件名
+    link.download = decodeURIComponent(newName);
+    //模拟点击
+    link.click();
+    //释放资源并删除创建的a标签
+    URL.revokeObjectURL(link.href);
+    link.remove()
+
+}
+
+
+const resetForm = () => {
+    dialogFormVisible.value = false;
+   
+    if (!form || form.value.name == '笔录') return
+
+    form.value.name = ''
+    form.value.content = ''
+    form.value.status = ''
+    form.value.delFlag = ''
+ 
+}
+
 
 
 </script>
@@ -47,40 +127,22 @@ const form = reactive({
 
         <el-dialog v-model="dialogFormVisible" title="请填写文档的基本信息" width="500">
             <el-form :model="form">
-                <el-form-item label="文档名字：" required prop="name">
+                <el-form-item label="文档名字：" placeholder="请填写文档名">
                     <el-input v-model="form.name" />
                 </el-form-item>
-                <el-form-item label="文档类型："  required prop="type">
-                    <el-input v-model="form.type"  />
+                <el-form-item label="文档类型：" placeholder="目前支持docx类型文档">
+                    <el-input readonly v-model="form.type" />
                 </el-form-item>
-                <el-form-item label="文档内容：" required prop="content">
+                <el-form-item label="文档内容：" placeholder="请填写文档内文本内容">
                     <el-input v-model="form.content" />
                 </el-form-item>
-
-                <el-form-item label="创建时间：" required prop="createTime">
-                    <el-col :span="11">
-                        <el-form-item prop="date1">
-                            <el-date-picker v-model="form.date1" type="date" aria-label="Pick a date"
-                                placeholder="Pick a date" style="width: 100%" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col class="text-center" :span="2">
-                        <span class="text-gray-500">-</span>
-                    </el-col>
-                    <el-col :span="11">
-                        <el-form-item prop="date2">
-                            <el-time-picker v-model="form.date2" aria-label="Pick a time" placeholder="Pick a time"
-                                style="width: 100%" />
-                        </el-form-item>
-                    </el-col>
-                </el-form-item>
-                <el-form-item label="文档状态：" required prop="status">
+                <el-form-item label="文档状态：">
                     <el-select v-model="form.status" placeholder="文档的状态">
                         <el-option label="正常状态" value="0" />
                         <el-option label="异常状态" value="1" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="逻辑删除：" required prop="delFlag">
+                <el-form-item label="逻辑删除：">
                     <el-select v-model="form.delFlag" placeholder="是否逻辑删除">
                         <el-option label="未删除" value="0" />
                         <el-option label="已删除" value="1" />
@@ -90,10 +152,10 @@ const form = reactive({
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="dialogFormVisible = false">
+                    <el-button @click="resetForm()">
                         取消
                     </el-button>
-                    <el-button type="primary" @click="dialogFormVisible = false">
+                    <el-button type="primary" @click="onSubmit()">
                         确定
                     </el-button>
                 </div>

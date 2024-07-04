@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class RecordServiceImpl implements RecordService {
         template.render(map);
         //以文件形式输出
         template.writeAndClose(new FileOutputStream(path + record.getName()+"."+record.getType()));
-
+        record.setCreateTime(LocalDateTime.now());
         //将数据插入数据库
         recordMapper.insert(record);
 
@@ -106,7 +107,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public ResponseEntity<byte[]> getWord(String wordUrl) throws IOException {
 
-        File file = new File("d:\\Desktop\\show\\template\\" + wordUrl);
+        File file = new File(path + wordUrl);
         FileInputStream inputStream = new FileInputStream(file);
         byte[] bytes = new byte[inputStream.available()];
         inputStream.read(bytes, 0, inputStream.available());
